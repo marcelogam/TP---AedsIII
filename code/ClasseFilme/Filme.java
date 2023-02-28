@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.DataInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
-
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Filme {
@@ -24,6 +24,11 @@ public class Filme {
 
     public Filme () {
         this(-1, 'N', "", new String [0], new String [0], new String [0], new Date(), (short) -1, "", "", new String [0], "");
+    } // end constructor
+
+    public Filme (byte [] ba) throws Exception {
+        this.date_added = new Date();
+        this.fromByteArray(ba);
     } // end constructor
 
     public Filme (int show_id, char type, String title, String [] director, String [] cast, String [] country, Date date_added, short release_year, String rating, String duration, String [] listed_in, String description){
@@ -168,6 +173,7 @@ public class Filme {
         this.duration     = dis.readUTF();
         this.listed_in    = readUTFarray(dis);
         this.description  = dis.readUTF();
+        // System.out.println(this.toString());
         dis.close();
         bais.close();
     } // end fromByteArray ()
@@ -207,12 +213,13 @@ public class Filme {
 
     @Override
     public String toString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
         String s = "id = " + this.show_id + '\n';
         s += "title = " + this.title + '\n';
         s += "director = " + stringArrayToString(this.director) + '\n';
         s += "cast = " + stringArrayToString(this.cast) + '\n';
         s += "country = " + stringArrayToString(this.country) + '\n';
-        s += "date_added = " + this.date_added + '\n';
+        s += "date_added = " + sdf.format(this.date_added) + '\n';
         s += "release_year = " + this.release_year + '\n';
         s += "rating = " + this.rating + '\n';
         s += "duration = " + this.duration + '\n';
@@ -221,4 +228,4 @@ public class Filme {
         return s;
     } // end toString()
 
-} // end Filme
+} // end class Filme
