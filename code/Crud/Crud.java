@@ -11,7 +11,7 @@ public class Crud {
         this.ras = new RandomAccessFile(arquivo, "rw");
     } // end constructor
 
-    public void create (Filme filme) throws Exception {
+    public int create (Filme filme) throws Exception {
         if(filme == null) filme = new Filme();
          // mover o ponteiro para o comeco do arquivo
             ras.seek(0);
@@ -31,6 +31,7 @@ public class Crud {
             ras.writeInt(filme.toByteArray().length);
          // escrever registro
             ras.write(filme.toByteArray());
+            return filme.get_show_id();
     } // end create ()
 
     public Filme read (int ID) throws Exception {

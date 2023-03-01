@@ -142,22 +142,49 @@ public class Filme {
         this.description = description;
     } // end set_description ()
 
+    /**
+     * <b>readUTFarray</b> - recebe um <code>DataInputStream</code> e le um array de <code>String</code>
+     * @param dis - <code>DataInputStream</code> para leitura
+     * @return <code>String []</code> com as <code>String</code> extraidas do <code>dis</code>
+     * @throws IOException
+     */
     public static String [] readUTFarray (DataInputStream dis) throws IOException {
+     // ler quantidade de Strings
         int tam = dis.readInt();
+
+     // cria o array de String a partir dessa quantidade
         String [] sarr = new String [tam];
+
+     // le a quantidade de String necessaria
         for (int i = 0; i < tam; i++) {
             sarr[i] = dis.readUTF();
         } // end for
         return sarr;
     } // end readUTFarray ()
 
+    /**
+     * <b>writeUTFarray</b> - recebe um <code>String []</code> e escreve no <code>dos</code> o tamanho desse array seguido das strings contidas nele
+     * @param sarr - <code>String []</code>
+     * @param dos - <code>DataOutputStream</code> para escrita
+     * @throws IOException 
+     */
     public static void writeUTFarray (String [] sarr, DataOutputStream dos) throws IOException {
+
+     // escreve a quantidade de Strings que vao ser escritas
         dos.writeInt(sarr.length);
+
+     // escreve as Strings
         for (int i = 0; i < sarr.length; i++) {
             dos.writeUTF(sarr[i]);
         } // end for
+
     } // end writeUTFarray ()
 
+    /**
+     * fromByteArray - recebe um <code>byte []</code> e atribui as informações nesse filme
+     * @param barr - <code>byte []</code> com informações sobre um filme
+     * @throws Exception
+     */
     public void fromByteArray ( byte [] barr ) throws Exception {
         ByteArrayInputStream bais = new ByteArrayInputStream(barr);
         DataInputStream dis = new DataInputStream(bais);
@@ -178,6 +205,11 @@ public class Filme {
         bais.close();
     } // end fromByteArray ()
 
+    /**
+     * toByteArray - escreve um <code>byte []</code> com as informações contidas nesse filme
+     * @return <code>byte []</code>
+     * @throws Exception
+     */
     public byte [] toByteArray () throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
@@ -201,6 +233,11 @@ public class Filme {
         return barr;
     } // end toByteArray ()
 
+    /**
+     * <b>stringArrayToString</b> - recebe um <code>String []</code> e retorna uma String representando esse array
+     * @param sarr - <code>String []</code>
+     * @return <code>String</code>
+     */
     public static String stringArrayToString (String [] sarr) {
         String s = "{ ";
         for (int i = 0; i < sarr.length; i++) {
@@ -210,6 +247,7 @@ public class Filme {
         s += " }";
         return s;
     } // end stringArrayToString ()
+
 
     @Override
     public String toString() {

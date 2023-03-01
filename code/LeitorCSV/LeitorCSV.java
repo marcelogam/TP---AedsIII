@@ -7,13 +7,16 @@ import java.util.Calendar;
 import java.util.Date;
 import ClasseFilme.Filme;
 
+/**
+ * <b>LeitorCSV</b> - classe com os codigos de leitura, focado em ler o CSV "netflix_titles.csv"
+ */
 public class LeitorCSV {
 
     /**
      * <b>readString</b> - recebe uma <code>String</code> registro de formato csv e retorna uma <code>String</code>
-     * @param registro - String registro em formato csv
-     * @param p - int para fazer atualizacao do registro
-     * @return String
+     * @param registro - <code>String</code> registro em formato csv
+     * @param p - <code>int</code> para fazer atualizacao do registro
+     * @return <code>String</code>
      */
     public static String readString( String registro , int [] p) {
         int i = p[0] + 1;
@@ -51,8 +54,8 @@ public class LeitorCSV {
      * <b>readStringArr</b> - recebe uma <code>String</code> registro de formato csv e retorna um array
      * <p><b>Exemplo de registro:</b></p> <p><b>Melhor caso:</b> <code>Teste Nome</code></p>
      * <p><b>Pior caso:</b> <code>"Issey Takahashi, Yuu Aoi, Kenta ""vulgo"" Hamano, Toko Miura, ""Koji Ohkura"", Pierre Taki, Eri Watanabe, Kitaro"</code></p>
-     * @param registro - String registro em formato csv
-     * @param p - int para fazer atualizacao do registro
+     * @param registro - <code>String</code> registro em formato csv
+     * @param p - <code>int</code> para fazer atualizacao do registro
      * @return <code>String []</code>
      */
     public static String [] readStringArr( String registro , int [] p ) {
@@ -139,10 +142,10 @@ public class LeitorCSV {
     } // end parseMonth()
     
     /**
-     * 
-     * @param registro
-     * @param p
-     * @return
+     * readDate - recebe uma <code>String</code> registro de formato csv e retorna um objeto <code>Date</code>
+     * @param registro - <code>String</code> registro em formato csv
+     * @param p - <code>int</code> para fazer atualizacao do registro
+     * @return <code>Date</code>
      */
     public static Date readDate (String registro, int [] p) {
         int mes = -1;
@@ -197,14 +200,14 @@ public class LeitorCSV {
     } // end readDate ()
 
     /**
-     * <b>iniciarBdPeloCSV</b> - inicia o banco de dados filme a partir do arquivo CSV netflix_titles.csv
+     * <b>iniciarBdPeloCSV</b> - inicia o banco de dados filme a partir do arquivo CSV "netflix_titles.csv"
      * @throws Exception
      */
     public static void iniciarBdPeloCSV(String arquivo) throws Exception {
 
      // Deletar o arquivo para recomeçar
         File arq = new File(arquivo);
-        arq.delete();
+        if(arq.delete()) System.out.println("deletado"); else System.out.println("nao foi possivel deletar");
 
      // Objeto leitor do csv
         BufferedReader freader = new BufferedReader(new FileReader(new File("./netflix_csv/netflix_titles.csv")));
