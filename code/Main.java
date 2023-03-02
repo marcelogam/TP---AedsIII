@@ -3,6 +3,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 
@@ -149,7 +150,7 @@ class Main {
     } // end mostrarOpcoes
 
     /**
-     * <b>menuInicial</b> - fun
+     * <b>menuInicial</b> - funcao que mostra o menu inicial
      * @throws Exception
      */
     public static void menuInicial () throws Exception {
@@ -158,7 +159,7 @@ class Main {
             Crud arquivo = new Crud("DataBase/filmes.db");
 
          // variavel para selecionar opção
-            int option = -2; // -2 = opção invalida
+            int option = -1; // -1 = opção invalida
      
             do {
                 mostrarOpcoes();
@@ -168,35 +169,41 @@ class Main {
                     option = Integer.parseInt(reader.readLine());
 
                  // se a opcao não existe
-                    if( option < -1 || option > 5 ) {
+                    if( option < 0 || option > 5 ) {
                         System.out.print("\nOpção invalida, tente novamente.\n");
-                        System.out.println("aperte enter para continuar.");
+                        System.out.println("aperte enter para continuar.\n");
                         reader.readLine();
                         System.out.println();
-                        option = -2;
+                        option = -1;
                     } // end if
              // se entrada não for um inteiro valido
                 } catch (Exception e) {
                     System.out.print("\nValor invalido, tente novamente.\n");
-                    System.out.println("aperte enter para continuar.");
+                    System.out.println("aperte enter para continuar.\n");
                     reader.readLine();
                     System.out.println();
-                    option = -2;
+                    option = -1;
                 } // end try
                 
                 switch ( option ) {
                     case 0: break;
 
                     case 1: System.out.println("\nRegistro criado na posição " + arquivo.create(lerFilmePelaEntrada()));
-                            System.out.println("aperte enter para continuar.");
+                            System.out.println("aperte enter para continuar.\n");
                             reader.readLine();
                             System.out.println();
                             break;
 
                     case 2:
                             System.out.print("\nID do filme: ");
-                            System.out.println(arquivo.read(Integer.parseInt(reader.readLine())));
-                            System.out.println("aperte enter para continuar.");
+                            int i = Integer.parseInt(reader.readLine());
+                            Filme temp = arquivo.read(i);
+                            if(temp != null) {
+                                System.out.println("\n" + temp.toString());
+                            } else {
+                                System.out.println("\nFilme não encontrado");
+                            } // end if
+                            System.out.println("aperte enter para continuar.\n");
                             reader.readLine();
                             System.out.println();
                             break;
@@ -204,12 +211,12 @@ class Main {
                     case 3: System.out.println("\nDigite o id do filme a ser atualizado e suas novas informações.\n");
                             if(!arquivo.update(lerFilmePelaEntrada())) {
                                 System.out.println("\nRegistro não encontrado.");
-                                System.out.println("aperte enter para continuar.");
+                                System.out.println("aperte enter para continuar.\n");
                                 reader.readLine();
                                 System.out.println();
                             } else {
                                 System.out.println("\nRegistro atualizado.");
-                                System.out.println("aperte enter para continuar.");
+                                System.out.println("aperte enter para continuar.\n");
                                 reader.readLine();
                                 System.out.println();
                             } // end if
@@ -217,12 +224,12 @@ class Main {
 
                     case 4: if(!arquivo.delete(Integer.parseInt(reader.readLine()))) {
                                 System.out.println("\nRegistro não encontrado.");
-                                System.out.println("aperte enter para continuar.");
+                                System.out.println("aperte enter para continuar.\n");
                                 reader.readLine();
                                 System.out.println();
                             } else {
                                 System.out.println("\nRegistro deletado com sucesso.");
-                                System.out.println("aperte enter para continuar.");
+                                System.out.println("aperte enter para continuar.\n");
                                 reader.readLine();
                                 System.out.println();
                             } // end if
@@ -231,37 +238,72 @@ class Main {
                     case 5: IntercalacaoBalanceada.menu();
                             break;
 
-                    default:option = -2;
+                    default:option = -1;
                             break;
                 } // end switch
             } while (option != 0);
     } // end menuInicial ()
 
+ // ---------------------------------------------------------------------------------------------------------- debug
+
     public static void lerTodoBD () throws Exception {
         DataInputStream dis = new DataInputStream(new FileInputStream("DataBase/filmes.db"));
         Filme temp = new Filme();
-        int tam;
-        for (int i = dis.readInt(); i > 0 ; i--) {
-            System.out.println(dis.readBoolean()); // lapide
+        int tam = dis.readInt();
+        while (true) {
+            try {
+                System.out.println(dis.readBoolean()); // lapide
+            } catch (Exception e) {
+                break;
+            }
             tam = dis.readInt();
             byte [] ba = new byte [tam]; // tamanho do registro
             dis.read(ba);
             temp.fromByteArray(ba);
             System.out.println("------------------------------");
-            System.out.println(temp.toString());
+            System.out.println(temp.get_show_id() + " " + temp.get_title());
             System.out.println("------------------------------\n");
         } // end for
         dis.close();
     } // end lerTodoBD ()
+    
+    public static void testes () throws Exception {
+
+        RandomAccessFile ras = new RandomAccessFile("DataBase/filmes.db", "rw");
+        ras.writeInt(0);
+        ras.close();
+
+        Crud crud = new Crud("DataBase/filmes.db");
+        Filme temp = new Filme();
+
+     // criacao de 100 filmes
+        for (int i = 0; i < 100; i++) {
+            temp.set_title("filme " + i);
+            crud.create(temp);
+        } // end for
+
+     // update de 20 filmes
+        for (int i = 0; i < 20; i+=2) {
+            temp.set_title("Atualizado Filme " + i);
+            temp.set_show_id(i);
+            crud.update(temp);
+        } // end for
+
+        IntercalacaoBalanceada.iBComum(4, 2);
+        // RandomAccessFile ras2 = new RandomAccessFile("IntercalacaoBalanceada/Arq.temp1", "rw ");
+    } // end testes ()
 
     public static void main(String[] args) throws Exception {
 
-     // se o arquivo .db não existir criar a partir do CSV
         File arq = new File("DataBase/filmes.db");
-        if(!arq.exists()) LeitorCSV.iniciarBdPeloCSV("DataBase/filmes.db");
+        System.out.println("arquivo deletado? " + arq.delete());
+        testes(); // inicia o banco de dados e bagunca ids
+        // lerTodoBD(); // mostra o bd
 
-     // mostrar menu inicial
-        menuInicial();
+        // LeitorCSV.iniciarBdPeloCSV("DataBase/filmes.db");
+        
+        // mostrar menu inicial
+        // menuInicial();
 
         // TODO: CRUD
         // create ()  [x]

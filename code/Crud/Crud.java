@@ -26,7 +26,7 @@ public class Crud {
          // mover o ponteiro para o fim do arquivo
             ras.seek(ras.length()); 
          // escrever lapide
-            ras.writeBoolean(true);
+            ras.writeBoolean(false);
          // escrever tamanho do byte
             ras.writeInt(filme.toByteArray().length);
          // escrever registro
@@ -35,7 +35,7 @@ public class Crud {
     } // end create ()
 
     public Filme read (int ID) throws Exception {
-        boolean lapide = false;
+        boolean lapide = true;
         int tamRegistro = 0;
      // posicionar o ponteiro no comeco do arquivo depois do cabecalho
         ras.seek(4); // 1 int
@@ -54,8 +54,8 @@ public class Crud {
             ras.read(ba);
             Filme filme = new Filme(ba);
 
-         // se lapide for verdadeira
-            if(lapide == true)
+         // se nao tiver lapide
+            if(!lapide)
              // se o id for igual ao pesquisado
                 if(filme.get_show_id() == ID) {
                     return filme;
@@ -65,7 +65,7 @@ public class Crud {
     } // end read ()
 
     public boolean update ( Filme novo ) throws Exception {
-        boolean lapide = false;
+        boolean lapide = true;
         int tamRegistro = 0;
      // posicionar o ponteiro no comeco do arquivo depois do cabecalho
         ras.seek(4); // 1 int
@@ -87,8 +87,8 @@ public class Crud {
             ras.read(ba);
             Filme filme = new Filme(ba);
 
-         // se lapide verdadeira
-            if(lapide == true)
+         // se nao tiver lapide
+            if(!lapide)
 
              // se o filme tiver o mesmo id do novo filme
                 if(filme.get_show_id() == novo.get_show_id()) {
@@ -98,13 +98,23 @@ public class Crud {
 
                  // se o tamanho do novo registro for igual ao antigo
                     if(baNovo.length <= tamRegistro) {
+                     // reescrever filme na posicao
                         ras.seek(posInicial + 5);
                         ras.write(baNovo);
                         return true;
                     } else {
+                     // atualizar lapide
                         ras.seek(posInicial);
+                        ras.writeBoolean(true);
+                     // create sem atualizar o id
+                     // mover o ponteiro para o fim do arquivo
+                        ras.seek(ras.length()); 
+                     // escrever lapide
                         ras.writeBoolean(false);
-                        this.create(novo);
+                     // escrever tamanho do byte
+                        ras.writeInt(novo.toByteArray().length);
+                     // escrever registro
+                        ras.write(novo.toByteArray());
                         return true;
                     } // end if
                 } // end if
@@ -113,7 +123,7 @@ public class Crud {
     } // end update ()
 
     public boolean delete ( int ID ) throws Exception {
-        boolean lapide = false;
+        boolean lapide = true;
         int tamRegistro = 0;
      // posicionar o ponteiro no comeco do arquivo depois do cabecalho
         ras.seek(4); // 1 int
@@ -135,14 +145,14 @@ public class Crud {
             ras.read(ba);
             Filme filme = new Filme(ba);
 
-         // se lapide verdadeira
-            if(lapide == true)
+         // se nao tiver lapide
+            if(!lapide)
              // se o id for igual ao pesquisado
                 if(filme.get_show_id() == ID) {
                  // retorna o ponteiro para a lapide desse registro
                     ras.seek(posInicial);
                  // escreve por cima da lapide, ou seja exclusao logica
-                    ras.writeBoolean(false);
+                    ras.writeBoolean(true);
                     return true;
                 } // end if
         } // end for
