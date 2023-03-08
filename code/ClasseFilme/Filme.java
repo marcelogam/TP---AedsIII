@@ -186,23 +186,22 @@ public class Filme {
      * @throws Exception
      */
     public void fromByteArray ( byte [] barr ) throws Exception {
-        ByteArrayInputStream bais = new ByteArrayInputStream(barr);
-        DataInputStream dis = new DataInputStream(bais);
-        this.show_id      = dis.readInt();
-        this.type         = dis.readChar();
-        this.title        = dis.readUTF();
-        this.director     = readUTFarray(dis);
-        this.cast         = readUTFarray(dis);
-        this.country      = readUTFarray(dis);
-        this.date_added.setTime(dis.readLong());
-        this.release_year = dis.readShort();
-        this.rating       = dis.readUTF();
-        this.duration     = dis.readUTF();
-        this.listed_in    = readUTFarray(dis);
-        this.description  = dis.readUTF();
-        // System.out.println(this.toString());
-        dis.close();
-        bais.close();
+            ByteArrayInputStream bais = new ByteArrayInputStream(barr);
+            DataInputStream dis = new DataInputStream(bais);
+            this.show_id      = dis.readInt();
+            this.type         = dis.readChar();
+            this.title        = dis.readUTF();
+            this.director     = readUTFarray(dis);
+            this.cast         = readUTFarray(dis);
+            this.country      = readUTFarray(dis);
+            this.date_added.setTime(dis.readLong());
+            this.release_year = dis.readShort();
+            this.rating       = dis.readUTF();
+            this.duration     = dis.readUTF();
+            this.listed_in    = readUTFarray(dis);
+            this.description  = dis.readUTF();
+            dis.close();
+            bais.close();
     } // end fromByteArray ()
 
     /**

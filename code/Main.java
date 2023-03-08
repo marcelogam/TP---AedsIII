@@ -278,7 +278,7 @@ class Main {
 
      // criacao de 100 filmes
         for (int i = 0; i < 100; i++) {
-            temp.set_title("filme " + i);
+            temp.set_title("filme " + (i + 1));
             crud.create(temp);
         } // end for
 
@@ -289,7 +289,7 @@ class Main {
             crud.update(temp);
         } // end for
 
-        IntercalacaoBalanceada.iBComum(4, 2);
+        IntercalacaoBalanceada.iBComum(6, 5);
         // RandomAccessFile ras2 = new RandomAccessFile("IntercalacaoBalanceada/Arq.temp1", "rw ");
     } // end testes ()
 
@@ -298,6 +298,7 @@ class Main {
         File arq = new File("DataBase/filmes.db");
         System.out.println("arquivo deletado? " + arq.delete());
         testes(); // inicia o banco de dados e bagunca ids
+
         // lerTodoBD(); // mostra o bd
 
         // LeitorCSV.iniciarBdPeloCSV("DataBase/filmes.db");
