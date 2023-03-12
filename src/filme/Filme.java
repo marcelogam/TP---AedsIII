@@ -1,4 +1,4 @@
-package ClasseFilme;
+package filme;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.DataInputStream;
@@ -7,7 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Filme {
+public class Filme implements Comparable<Filme>{
 
     private int show_id; 
     private char type;
@@ -264,5 +264,16 @@ public class Filme {
         s += "description = " + this.description + '\n';
         return s;
     } // end toString()
+
+    @Override
+    public int compareTo(Filme o) {
+        if (this.show_id > o.show_id) {
+            return 1;
+        } else if (this.show_id < o.show_id) {
+            return -1;
+        } else {
+            return 0;
+        } // end if
+    } // end compareTo
 
 } // end class Filme

@@ -1,21 +1,40 @@
+package menu;
+
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 
-import ClasseFilme.Filme;
-import Crud.Crud;
-import IntercalacaoBalanceada.IntercalacaoBalanceada;
-import LeitorCSV.LeitorCSV;
+import arquivo.Arquivo;
+import crud.Crud;
+import filme.Filme;
+import intercalacao.IntercalacaoBalanceada;
+import leitorCSV.LeitorCSV;
 
-class Main {
+public class Menu {
 
- // BufferedReader para leituras do teclado
+
+    // BufferedReader para leituras do teclado
     public static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, Charset.forName("UTF-8")));
+
+     /**
+      * <b>mostrarOpcoesIntercalacao</b> - mostra as opções do menu de IntercalacaoBalanceada
+      */
+      public static void mostrarOpcoesIntercalacao() {
+        System.out.println();
+        System.out.println("---------------------------------------------------------- ");
+        System.out.println("Trabalho Pratico 1                                         ");
+        System.out.println("netflix_titles                                             ");
+        System.out.println("Intercalação Balanceada                                    ");
+        System.out.println();
+        System.out.println(" 1. Intercalação Balanceada Comum                          ");
+        System.out.println(" 2. Intercalação Balanceada com blocos de tamanho variável ");
+        System.out.println(" 3. Intercalação Balanceada com seleção por substituição   ");
+        System.out.println();
+        System.out.println(" 0. Voltar                                                 ");
+        System.out.println("---------------------------------------------------------- ");
+        System.out.print(  "Selecione uma opção: ");
+    } // end mostrarOpcoesIntercalacao ()
 
     /**
      * <b>lerFilmePelaEntrada<b> - pega informações da entrada (teclado) e vai atribuindo a um <code>Filme</code>, já tratando erros
@@ -143,6 +162,7 @@ class Main {
         System.out.println(" 3. Update                                                ");
         System.out.println(" 4. Delete                                                ");
         System.out.println(" 5. Intercalações                                         ");
+        System.out.println(" 6. Reiniciar banco de dados a partir do CSV              ");
         System.out.println();
         System.out.println(" 0. Exit                                                  ");
         System.out.println("----------------------------------------------------------");
@@ -156,11 +176,11 @@ class Main {
     public static void menuInicial () throws Exception {
 
          // criar instancia de crud
-            Crud arquivo = new Crud("DataBase/filmes.db");
+            Crud arquivo = new Crud("database/filmes.db");
 
          // variavel para selecionar opção
             int option = -1; // -1 = opção invalida
-     
+            final int quantidadeDeOpcoes = 6;
             do {
                 mostrarOpcoes();
 
@@ -169,7 +189,7 @@ class Main {
                     option = Integer.parseInt(reader.readLine());
 
                  // se a opcao não existe
-                    if( option < 0 || option > 5 ) {
+                    if( option < 0 || option > quantidadeDeOpcoes ) {
                         System.out.print("\nOpção invalida, tente novamente.\n");
                         System.out.println("aperte enter para continuar.\n");
                         reader.readLine();
@@ -188,7 +208,7 @@ class Main {
                 switch ( option ) {
                     case 0: break;
 
-                    case 1: System.out.println("\nRegistro criado na posição " + arquivo.create(lerFilmePelaEntrada()));
+                    case 1: System.out.println("\nRegistro criado com o ID " + arquivo.create(lerFilmePelaEntrada()));
                             System.out.println("aperte enter para continuar.\n");
                             reader.readLine();
                             System.out.println();
@@ -222,7 +242,8 @@ class Main {
                             } // end if
                             break;
 
-                    case 4: if(!arquivo.delete(Integer.parseInt(reader.readLine()))) {
+                    case 4: System.out.print("digite o id do filme a ser deletado: ");
+                            if(!arquivo.delete(Integer.parseInt(reader.readLine()))) {
                                 System.out.println("\nRegistro não encontrado.");
                                 System.out.println("aperte enter para continuar.\n");
                                 reader.readLine();
@@ -235,7 +256,15 @@ class Main {
                             } // end if
                             break;
 
-                    case 5: IntercalacaoBalanceada.menu();
+                    case 5: menuIntercalacoes();
+                            break;
+
+                    case 6: System.out.println("TEM CERTEZA? (digite 's' ou 'S' para confirmar).");
+                            if(reader.readLine().charAt(0) == 's' || reader.readLine().charAt(0) == 'S') {
+                                Arquivo bd = new Arquivo("database/filmes.db");
+                                bd.limpar();
+                                LeitorCSV.iniciarBdPeloCSV("database/filmes.db");
+                            } // end if
                             break;
 
                     default:option = -1;
@@ -243,80 +272,59 @@ class Main {
                 } // end switch
             } while (option != 0);
     } // end menuInicial ()
-
- // ---------------------------------------------------------------------------------------------------------- debug
-
-    public static void lerTodoBD () throws Exception {
-        DataInputStream dis = new DataInputStream(new FileInputStream("DataBase/filmes.db"));
-        Filme temp = new Filme();
-        int tam = dis.readInt();
-        while (true) {
-            try {
-                System.out.println(dis.readBoolean()); // lapide
-            } catch (Exception e) {
-                break;
-            }
-            tam = dis.readInt();
-            byte [] ba = new byte [tam]; // tamanho do registro
-            dis.read(ba);
-            temp.fromByteArray(ba);
-            System.out.println("------------------------------");
-            System.out.println(temp.get_show_id() + " " + temp.get_title());
-            System.out.println("------------------------------\n");
-        } // end for
-        dis.close();
-    } // end lerTodoBD ()
     
-    public static void testes () throws Exception {
+     /**
+      * <b>menuIntercalacoes</b> - mostra menu das intercalações
+      * @throws Exception
+      */
+      public static void menuIntercalacoes () throws Exception {
+        int option = -1; // -1 = opção invalida
+        do {
+            mostrarOpcoesIntercalacao();
 
-        RandomAccessFile ras = new RandomAccessFile("DataBase/filmes.db", "rw");
-        ras.writeInt(0);
-        ras.close();
+            try {
+                 // atualizar opcao
+                    option = Integer.parseInt(reader.readLine());
 
-        Crud crud = new Crud("DataBase/filmes.db");
-        Filme temp = new Filme();
+                 // se a opcao não existe
+                    if( option < 0 || option > 3 ) {
+                        System.out.print("\nOpção invalida, tente novamente.\n");
+                        System.out.println("aperte enter para continuar.\n");
+                        reader.readLine();
+                        System.out.println();
+                        option = -1;
+                    } // end if
+             // se entrada não for um inteiro valido
+                } catch (Exception e) {
+                    System.out.print("\nValor invalido, tente novamente.\n");
+                    System.out.println("aperte enter para continuar.\n");
+                    reader.readLine();
+                    System.out.println();
+                    option = -1;
+                } // end try
+                int qntRegistros;
+                int qntCaminhos;
 
-     // criacao de 100 filmes
-        for (int i = 0; i < 100; i++) {
-            temp.set_title("filme " + (i + 1));
-            crud.create(temp);
-        } // end for
+                switch ( option ) {
+                    case 0: break;
+                    case 1: System.out.print("\n Digite a quantidade de registros: ");
+                            qntRegistros = Integer.parseInt(reader.readLine());
+                            System.out.print("\n Digite a quantidade de caminhos: ");
+                            qntCaminhos = Integer.parseInt(reader.readLine());
+                            IntercalacaoBalanceada.iBComum(qntRegistros, qntCaminhos);
+                            break;
+                    case 2: System.out.print("\n Digite a quantidade de registros: ");
+                            qntRegistros = Integer.parseInt(reader.readLine());
+                            System.out.print("\n Digite a quantidade de caminhos: ");
+                            qntCaminhos = Integer.parseInt(reader.readLine());
+                            IntercalacaoBalanceada.iBComBlocosDeTamanhoVariavel(qntRegistros, qntRegistros);
+                            break;
+                    case 3: IntercalacaoBalanceada.iBComSelecaoPorSubstituicao();
+                            break;
+                    default: break;
+                } // end switch
 
-     // update de 20 filmes
-        for (int i = 0; i < 20; i+=2) {
-            temp.set_title("Atualizado Filme " + i);
-            temp.set_show_id(i);
-            crud.update(temp);
-        } // end for
+        } while (option != 0);
+    } // end menuIntercalacoes ()
 
-        IntercalacaoBalanceada.iBComum(6, 5);
-        // RandomAccessFile ras2 = new RandomAccessFile("IntercalacaoBalanceada/Arq.temp1", "rw ");
-    } // end testes ()
-
-    public static void main(String[] args) throws Exception {
-
-        File arq = new File("DataBase/filmes.db");
-        System.out.println("arquivo deletado? " + arq.delete());
-        testes(); // inicia o banco de dados e bagunca ids
-
-        // lerTodoBD(); // mostra o bd
-
-        // LeitorCSV.iniciarBdPeloCSV("DataBase/filmes.db");
-        
-        // mostrar menu inicial
-        // menuInicial();
-
-        // TODO: CRUD
-        // create ()  [x]
-        // read   ()  [x]
-        // update ()  [x]
-        // delete ()  [x]
-        // crud menu  [x]
-
-        // TODO: ordenação
-        // 1. Intercalação balanceada comum                          [ ]
-        // 2. Intercalação balanceada com blocos de tamanho variável [ ]
-        // 3. Intercalação balanceada com seleção por substituição   [ ]
-
-    } // end main ()
-} // end class Main
+} // end class Menu

@@ -1,11 +1,12 @@
-package LeitorCSV;
+package leitorCSV;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.RandomAccessFile;
 import java.util.Calendar;
 import java.util.Date;
-import ClasseFilme.Filme;
+
+import filme.Filme;
 
 /**
  * <b>LeitorCSV</b> - classe com os codigos de leitura, focado em ler o CSV "netflix_titles.csv"
@@ -205,10 +206,6 @@ public class LeitorCSV {
      */
     public static void iniciarBdPeloCSV(String arquivo) throws Exception {
 
-     // Deletar o arquivo para recomeçar
-        File arq = new File(arquivo);
-        if(arq.delete()) System.out.println("deletado"); else System.out.println("nao foi possivel deletar");
-
      // Objeto leitor do csv
         BufferedReader freader = new BufferedReader(new FileReader(new File("./netflix_csv/netflix_titles.csv")));
      // alterações feitas no csv para permitir leitura concreta
@@ -263,7 +260,7 @@ public class LeitorCSV {
 
          // escrever registro no arquivo
             byte [] barr = filme.toByteArray();
-            ras.writeBoolean(true);    // escrever lapide
+            ras.writeBoolean(false);    // escrever lapide
             ras.writeInt(barr.length); // escrever tamanho
             ras.write(barr);           // escrever registro
 

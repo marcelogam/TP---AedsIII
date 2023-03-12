@@ -1,8 +1,8 @@
-package Crud;
+package crud;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 
-import ClasseFilme.Filme;
+import filme.Filme;
 
 public class Crud {
     private RandomAccessFile ras;
@@ -33,6 +33,19 @@ public class Crud {
             ras.write(filme.toByteArray());
             return filme.get_show_id();
     } // end create ()
+
+    public void createSemTrocarId (Filme filme) throws Exception {
+      if(filme == null) filme = new Filme();
+     // create sem atualizar o id
+     // mover o ponteiro para o fim do arquivo
+        ras.seek(ras.length()); 
+     // escrever lapide
+        ras.writeBoolean(false);
+     // escrever tamanho do byte
+        ras.writeInt(filme.toByteArray().length);
+     // escrever registro
+        ras.write(filme.toByteArray());
+  } // end create ()
 
     public Filme read (int ID) throws Exception {
         boolean lapide = true;
